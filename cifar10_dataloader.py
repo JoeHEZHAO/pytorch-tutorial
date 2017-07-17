@@ -39,7 +39,7 @@ class CIFAR10(object):
       plt.imshow(np.transpose(npimg, (1,2,0)))
 
 if __name__ == '__main__':
-    main()
+    cifar10 = CIFAR10()
 
 # dataiter = iter(trainloader)
 # images, labels = dataiter.next()
