@@ -15,7 +15,7 @@ class Cifar10_Net(nn.Module):
 
     def forward(self, x):
         x = F.max_pool2d(F.relu(self.conv1(x)), (2,2))
-        x = F.max_pool2d(F.relu(self.conv2(x)), 2)
+        x = F.max_pool2d(F.relu(self.conv2(x)), (2,2))
         x = x.view(-1, 16 * 5 * 5)
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
@@ -28,27 +28,12 @@ class Cifar10_Net(nn.Module):
             num_features *= s
         return num_features
 
+    def Conv2d(input, input_channel, out_channel, padding='SAME', stride=1, kernal_size=3):
+        paddingInt = ((((((H - 1) * stride) + 1) * kernal_size) + 1) - H ) / 2
+        return nn.Conv2d(in_channels=input_channel, out_channels=out_channel, kernel_size=kernal_size, stride=stride, padding=paddingInt)
+
 def main():
     pass
 
 if __name__ == '__main__':
     main()
-
-# net = Net()
-# print(net)
-
-# target = Variable(torch.arange(1,11))
-# criterion = nn.MSELoss()
-
-# optimizer = optim.SGD(net.parameters(), lr=0.01)
-
-# for i in range(1,1000):
-#     input = Variable(torch.rand(1,1,32,32))
-#     optimizer.zero_grad()
-#     output = net(input)
-#     loss = criterion(output, target)
-#     loss.backward()
-#     optimizer.step()
-#     print("step " + str(i) + " loss is : " + str(loss.data))
-
-# print(net(input))
