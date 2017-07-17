@@ -16,9 +16,11 @@ class CIFAR10(object):
     )
 
     self.classes = ('plane', 'car', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
-    self._trainset = torchvision.datasets.CIFAR10(root='/Users/zhaohe/workspace/pytorch_toying/data', train=True, download=True, transform=self.transform)
+    # self._trainset = torchvision.datasets.CIFAR10(root='/Users/zhaohe/workspace/pytorch_toying/data', train=True, download=True, transform=self.transform)
+    self._trainset = torchvision.datasets.CIFAR10(root='/home/dyj/workspace/pytorch-exercise/data', train=True, download=True, transform=self.transform)
     self._trainloader = torch.utils.data.DataLoader(self._trainset, batch_size=4, shuffle=True, num_workers=2)
-    self._testset = torchvision.datasets.CIFAR10(root='/Users/zhaohe/workspace/pytorch_toying/data', train=False, download=True, transform=self.transform)
+    # self._testset = torchvision.datasets.CIFAR10(root='/Users/zhaohe/workspace/pytorch_toying/data', train=False, download=True, transform=self.transform)
+    self._testset = torchvision.datasets.CIFAR10(root='/home/dyj/workspace/pytorch-exercise/data', train=False, download=True, transform=self.transform)
     self._testloader = torch.utils.data.DataLoader(self._testset, batch_size=4, shuffle=False, num_workers=2)
 
   def trainSet(self):
