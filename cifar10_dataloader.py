@@ -16,9 +16,9 @@ class CIFAR10(object):
     )
 
     self.classes = ('plane', 'car', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
-    self._trainset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=self.transform)
+    self._trainset = torchvision.datasets.CIFAR10(root='/Users/zhaohe/workspace/pytorch_toying/data', train=True, download=True, transform=self.transform)
     self._trainloader = torch.utils.data.DataLoader(self._trainset, batch_size=4, shuffle=True, num_workers=2)
-    self._testset = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=self.transform)
+    self._testset = torchvision.datasets.CIFAR10(root='/Users/zhaohe/workspace/pytorch_toying/data', train=False, download=True, transform=self.transform)
     self._testloader = torch.utils.data.DataLoader(self._testset, batch_size=4, shuffle=False, num_workers=2)
 
   def trainSet(self):
@@ -33,20 +33,19 @@ class CIFAR10(object):
   def testLoader(self):
     return self._testloader
 
-  def imshow(self, img):
-      img = img / 2 + 0.5
-      npimg = img.numpy()
-      plt.imshow(np.transpose(npimg, (1,2,0)))
+  def imshow(self):
+    dataiter = iter(self._trainloader)
+    images, labels = dataiter.next()
+    img = torchvision.utils.make_grid(images)
+    img = img / 2 + 0.5
+    npimg = img.numpy()
+    plt.imshow(np.transpose(npimg, (1,2,0)))
+    plt.show()
+    print(' '.join('%5s' % self.classes[labels[j]] for j in range(4)))
 
 if __name__ == '__main__':
-    cifar10 = CIFAR10()
-
-# dataiter = iter(trainloader)
-# images, labels = dataiter.next()
-
-# imshow(torchvision.utils.make_grid(images))
-
-# print(' '.join('%5s' % classes[labels[j]] for j in range(4)))
+    CIFAR10 = CIFAR10()
+    CIFAR10.imshow()
 
 
 
