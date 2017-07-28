@@ -1,3 +1,28 @@
+import os
+import numpy as np
+import torch
+from torchvision import transforms, datasets, utils
+from torch.utils.data import Dataset, DataLoader
+from skimage import io, color
+from PIL import Image
+import random
+# import matplotlib.pyplot as plt
+
+data_transform = transforms.Compose([
+        transforms.RandomSizedCrop(224),
+        transforms.RandomHorizontalFlip(),
+        transforms.ToTensor(),
+    ])
+
+target_transform = transforms.Compose([
+        transforms.RandomSizedCrop(224),
+        transforms.RandomHorizontalFlip(),
+        transforms.ToTensor(),
+    ])
+
+data_dir = '/Users/zhaohe/workspace/data/lung_training_data'
+
+
 class LungDataset(Dataset):
     def __init__(self, root, transform):
         self.root = root
@@ -48,3 +73,13 @@ class LungDataset(Dataset):
          
         plt.imshow(np.transpose(target, (1,2,0)) * 255)
         plt.show()
+
+lung424 = LungDataset(root=data_dir, data_transform=data_transform, target_transform=target_transform)
+
+LungDataLoader = DataLoader(lung424, shuffle=True, batch_size=5)
+
+if __name__ == '__main__':
+    lung424 = LungDataset(root=data_dir, data_transform=data_transform, target_transform=target_transform)
+    lung424.view(0)
+
+
