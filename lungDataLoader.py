@@ -1,21 +1,3 @@
-import os
-import numpy as np
-import torch
-from torchvision import transforms, datasets
-from torch.utils.data import Dataset, DataLoader
-from torchvision import utils
-from skimage import io
-import matplotlib.pyplot as plt
-
-data_transform = transforms.Compose([
-        transforms.ToTensor(),
-        transforms.RandomHorizontalFlip(),
-        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
-        transforms.RandomSizedCrop(224),
-])
-
-data_dir = '/Users/zhaohe/workspace/data/lung_training_data'
-
 class LungDataset(Dataset):
     def __init__(self, root, transform):
         self.root = root
@@ -37,35 +19,32 @@ class LungDataset(Dataset):
         return len(self.images)
     
     def __getitem__(self, idx):
-        image = io.imread(self.images[idx])
-        target = io.imread(self.targets[idx])
-       
-        w,h = image.shape
-        img = np.empty((3, w, h), dtype=np.float32)
-        targ = np.empty((3, w, h), dtype=np.float32)
-
-        for i in range(3):
-            img[i,:,:] = image
-            targ[i,:,:] = target 
+        
+        image = Image.open(self.images[idx])
+        target = Image.open(self.targets[idx])
+        
+        # just in case it is single channel
+        image = image.convert('RGB')
+        target = target.convert('RGB')
         
         if self.transform:
-            img = self.transform(img)
-            targ = self.transform(targ)
+            image = self.transform(image)
+            target = self.transform(target)
             
-        return [img, targ]
+        return [image, target]
 
     
     def view(self, idx):
         fig = plt.figure()
         img, target = self.__getitem__(idx)
-#         print(np.max(img[0,:,:]))
+        
+        img = img.numpy()
+        target = target.numpy()
+        print(img.shape)
         
         ## For plt Dim must be (H,W,C)
         plt.imshow(np.transpose(img, (1,2,0)))
         plt.show()
-        plt.imshow(np.transpose(target, (1,2,0)))
+         
+        plt.imshow(np.transpose(target, (1,2,0)) * 255)
         plt.show()
-
-
-if __name__ == '__main__':
-	pass
