@@ -6,30 +6,31 @@ from torch.utils.data import Dataset, DataLoader
 from skimage import io, color
 from PIL import Image
 import random
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 
 data_transform = transforms.Compose([
         transforms.RandomSizedCrop(224),
         transforms.RandomHorizontalFlip(),
         transforms.ToTensor(),
+#         transforms.Normalize(mean=[0.485, 0.456, 0.406],
+#                              std=[0.229, 0.224, 0.225])
     ])
 
 target_transform = transforms.Compose([
         transforms.RandomSizedCrop(224),
         transforms.RandomHorizontalFlip(),
-        transforms.ToTensor(),
+#         transforms.ToTensor(),
     ])
 
 data_dir = '/Users/zhaohe/workspace/data/lung_training_data'
 
 class LungDataset(Dataset):
-    class LungDataset(Dataset):
     def __init__(self, root, data_transform, target_transform):
         self.root = root
         self.data_transform = data_transform
         self.target_transform = target_transform
         self.IMAGE_EXT = ['.png', 'jpeg', 'jpg', 'bmp']
-        self.seed = np.random.randint(25)
+        # self.seed = np.random.randint(25)
         train_list = {}
         
         for x in ['train', 'val']:
@@ -55,13 +56,13 @@ class LungDataset(Dataset):
 #         target = target.convert('RGB')
 
         if self.data_transform:
-            random.seed(self.seed)
+            random.seed(np.random.randint(25))
             image = self.data_transform(image)
             
         if self.target_transform:    
-            random.seed(self.seed)
+            random.seed(np.random.randint(25))
             target = self.target_transform(target)
-            target = np.asarray(target).astype(np.int64)
+            target = np.expand_dims(np.asarray(target).astype(np.float32), axis=0)
             
         return [image, torch.from_numpy(target)]
     
@@ -85,7 +86,6 @@ class LungDataset(Dataset):
 lung424 = LungDataset(root=data_dir, data_transform=data_transform, target_transform=target_transform)
 
 if __name__ == '__main__':
-    lung424 = LungDataset(root=data_dir, data_transform=data_transform, target_transform=target_transform)
     lung424.view(0)
 
 
