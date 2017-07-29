@@ -22,12 +22,14 @@ target_transform = transforms.Compose([
 
 data_dir = '/Users/zhaohe/workspace/data/lung_training_data'
 
-
 class LungDataset(Dataset):
-    def __init__(self, root, transform):
+    class LungDataset(Dataset):
+    def __init__(self, root, data_transform, target_transform):
         self.root = root
-        self.transform = transform
+        self.data_transform = data_transform
+        self.target_transform = target_transform
         self.IMAGE_EXT = ['.png', 'jpeg', 'jpg', 'bmp']
+        self.seed = np.random.randint(25)
         train_list = {}
         
         for x in ['train', 'val']:
@@ -50,14 +52,18 @@ class LungDataset(Dataset):
         
         # just in case it is single channel
         image = image.convert('RGB')
-        target = target.convert('RGB')
-        
-        if self.transform:
-            image = self.transform(image)
-            target = self.transform(target)
-            
-        return [image, target]
+#         target = target.convert('RGB')
 
+        if self.data_transform:
+            random.seed(self.seed)
+            image = self.data_transform(image)
+            
+        if self.target_transform:    
+            random.seed(self.seed)
+            target = self.target_transform(target)
+            target = np.asarray(target).astype(np.int64)
+            
+        return [image, torch.from_numpy(target)]
     
     def view(self, idx):
         fig = plt.figure()
@@ -65,18 +71,18 @@ class LungDataset(Dataset):
         
         img = img.numpy()
         target = target.numpy()
-        print(img.shape)
         
         ## For plt Dim must be (H,W,C)
         plt.imshow(np.transpose(img, (1,2,0)))
         plt.show()
          
-        plt.imshow(np.transpose(target, (1,2,0)) * 255)
+#         target = np.transpose(target, (1,2,0))
+#         target = np.squeeze(target, axis=2)
+        print(target.shape)
+        plt.imshow(target * 255)
         plt.show()
 
 lung424 = LungDataset(root=data_dir, data_transform=data_transform, target_transform=target_transform)
-
-LungDataLoader = DataLoader(lung424, shuffle=True, batch_size=5)
 
 if __name__ == '__main__':
     lung424 = LungDataset(root=data_dir, data_transform=data_transform, target_transform=target_transform)
