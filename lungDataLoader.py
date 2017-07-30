@@ -22,15 +22,15 @@ target_transform = transforms.Compose([
 #         transforms.ToTensor(),
     ])
 
-data_dir = '/Users/zhaohe/workspace/data/lung_training_data'
+data_dir = '/home/zhaohe/data/lung_training_data'
 
 class LungDataset(Dataset):
     def __init__(self, root, data_transform, target_transform):
         self.root = root
         self.data_transform = data_transform
         self.target_transform = target_transform
-        self.IMAGE_EXT = ['.png', 'jpeg', 'jpg', 'bmp']
-        # self.seed = np.random.randint(25)
+        self.IMAGE_EXT = ['png', 'jpeg', 'jpg', 'bmp']
+        self.seed = 123
         train_list = {}
         
         for x in ['train', 'val']:
@@ -42,6 +42,7 @@ class LungDataset(Dataset):
 
         self.images = train_list['train']
         self.targets = train_list['val']
+        self.dataLength = len(train_list['train'])
         
     def __len__(self):
         return len(self.images)
@@ -53,14 +54,14 @@ class LungDataset(Dataset):
         
         # just in case it is single channel
         image = image.convert('RGB')
-#         target = target.convert('RGB')
+#       target = target.convert('RGB')
 
         if self.data_transform:
-            random.seed(np.random.randint(25))
+            random.seed(self.seed)
             image = self.data_transform(image)
             
         if self.target_transform:    
-            random.seed(np.random.randint(25))
+            random.seed(self.seed)
             target = self.target_transform(target)
             target = np.expand_dims(np.asarray(target).astype(np.float32), axis=0)
             
@@ -82,6 +83,20 @@ class LungDataset(Dataset):
         print(target.shape)
         plt.imshow(target * 255)
         plt.show()
+
+    def getRandItem(self):
+
+        idx = random.randint(0, 423)
+
+        image = Image.open(self.images[idx])
+        target = Image.open(self.targets[idx])
+
+		# just in case it is single channel
+        image = image.convert('RGB')
+		#       target = target.convert('RGB')
+
+        return [np.asarray(image).astype(np.float32), np.asarray(target).astype(np.float32)]
+
 
 lung424 = LungDataset(root=data_dir, data_transform=data_transform, target_transform=target_transform)
 
