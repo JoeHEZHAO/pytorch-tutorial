@@ -1,0 +1,7 @@
+data
+__pycache__
+.ropeproject
+lung_training_data
+
+*.pkl
+
